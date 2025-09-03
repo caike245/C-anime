@@ -7,3 +7,4 @@ deep-translator
 google-search
 beautifulsoup4
 python-dotenv
+setuptools
