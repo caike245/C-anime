@@ -1,10 +1,10 @@
 discord.py
-google
-flask
 requests
-googlesearch-python
 deep-translator
-google-search
+googlesearch-python
 beautifulsoup4
 python-dotenv
 setuptools
+flask
+google
+google-search
