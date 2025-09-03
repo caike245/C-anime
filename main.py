@@ -18,36 +18,20 @@ if TOKEN is None:
     raise ValueError("⚠️ Token do Discord não encontrado. Defina a variável de ambiente DISCORD_TOKEN.")
 
 # -------------------------
-# Link público do Replit
-# -------------------------
-REPLIT_URL = "https://SEU_REPLIT.repl.co/"
-print(f"🔗 Link público do bot: {REPLIT_URL}")
-
-# -------------------------
 # Servidor Flask (mantém vivo)
 # -------------------------
 app = Flask('')
 
 @app.route('/')
 def home():
-    return "O bot está rodando!"
+    return "O bot está rodando no Render!"
 
 def run():
-    app.run(host='0.0.0.0', port=8080)
+    port = int(os.environ.get("PORT", 8080))  # Porta do Render
+    app.run(host='0.0.0.0', port=port)
 
 def keep_alive():
     Thread(target=run).start()
-
-def keep_alive_ping():
-    import requests, time
-    while True:
-        try:
-            requests.get(REPLIT_URL)
-        except:
-            pass
-        time.sleep(300)
-
-Thread(target=keep_alive_ping).start()
 
 # -------------------------
 # Configuração do bot Discord
@@ -63,6 +47,7 @@ client = discord.Client(intents=intents)
 async def on_interaction(interaction):
     if interaction.type == discord.InteractionType.component:
         await handle_genre_interaction(interaction)
+
 @client.event
 async def on_ready():
     print(f'🤖 Bot logado como {client.user}')
