@@ -1,15 +1,20 @@
 import requests
 from deep_translator import GoogleTranslator
-from googlesearch import search
+from googlesearch.googlesearch import search  # versão correta
 import discord
 
 def get_valid_link(query, domain):
-    for link in search(f"{query} site:{domain}", num_results=3, lang="pt"):
-        if domain in link:
-            return link
+    """Busca links válidos no Google de um domínio específico."""
+    try:
+        for link in search(f"{query} site:{domain}", num_results=3, lang="pt"):
+            if domain in link:
+                return link
+    except Exception as e:
+        print(f"Erro na busca Google: {e}")
     return None
 
 async def buscar_anime(client, message):
+    """Função para buscar anime e enviar embed no Discord."""
     anime_name = message.content[len('!anime '):].strip()
     if not anime_name:
         await message.channel.send('Por favor, digite o nome de um anime. Ex: `!anime One Piece`')
@@ -17,6 +22,7 @@ async def buscar_anime(client, message):
 
     await message.channel.send(f'🔎 Procurando informações sobre **{anime_name}**...')
     try:
+        # Busca informações via Jikan API (MyAnimeList)
         url = f"https://api.jikan.moe/v4/anime?q={anime_name}&limit=1"
         response = requests.get(url).json()
 
@@ -32,14 +38,17 @@ async def buscar_anime(client, message):
         score = anime.get("score", "N/A")
         year = anime.get("year", "Desconhecido")
 
+        # Traduz sinopse
         try:
             synopsis_pt = GoogleTranslator(source="auto", target="pt").translate(synopsis)
         except:
             synopsis_pt = synopsis
 
+        # Busca links online via Google
         link_animesonline = get_valid_link(anime_name, "animesonlinecc.to")
         link_anitube = get_valid_link(anime_name, "anitube.vip")
 
+        # Cria embed para o Discord
         embed = discord.Embed(
             title=f"🎬 {title}",
             description=synopsis_pt[:500] + ("..." if len(synopsis_pt) > 500 else ""),
