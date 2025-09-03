@@ -1,6 +1,6 @@
 import requests
 from deep_translator import GoogleTranslator
-from googlesearch.googlesearch import search  # versão correta
+from googlesearch import search  # import correto
 import discord
 
 def get_valid_link(query, domain):
